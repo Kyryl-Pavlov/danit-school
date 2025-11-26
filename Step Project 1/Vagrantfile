@@ -1,0 +1,75 @@
+Vagrant.configure("2") do |config|
+  # =========================
+  # DB VM (from previous task)
+  # =========================
+  config.vm.define "db" do |db|
+    db.vm.box = "ubuntu/jammy64"
+    # Private network (this is your Vagrant private subnet)
+    db.vm.network "private_network", ip: "192.168.56.10"
+    db.vm.provider "virtualbox" do |vb|
+      vb.memory = 4096
+      vb.cpus = 2
+    end
+
+    # Read from host environment variables
+    db_user   = ENV['DB_USER'] || "dbuser"
+    db_pass   = ENV['DB_PASS'] || "dbpass"
+    db_name   = ENV['DB_NAME'] || "dbname"
+    db_subnet = "192.168.56.%"          # allow only hosts from private subnet
+    db_ip     = "192.168.56.10"         # the VM's private IP
+
+    # --- IMPORTANT LINE FOR WINDOWS USERS ---
+    # Ensure the script is executable inside the VM
+    config.vm.provision "shell", inline: "chmod +x /vagrant/provision-mysql.sh"
+
+    db.vm.provision "shell",
+      path: "provision-mysql.sh",
+      env: {
+        "DB_USER"      => db_user,
+        "DB_PASS"      => db_pass,
+        "DB_NAME"      => db_name,
+        "DB_SUBNET"    => db_subnet,
+        "DB_PRIVATE_IP"=> db_ip
+      }
+  end
+
+  # =========================
+  # APP VM
+  # =========================
+  config.vm.define "app" do |app|
+    app.vm.box = "ubuntu/jammy64"
+    app.vm.network "private_network", ip: "192.168.56.11"
+    app.vm.provider "virtualbox" do |vb|
+      vb.memory = 4096
+      vb.cpus = 2
+    end
+
+    # --- Read from host ENV (Windows: $env:...) ---
+    app_user = ENV['APP_USER'] || "appuser"
+    db_host  = ENV['DB_HOST']  || "192.168.56.10"
+    db_port  = ENV['DB_PORT']  || "3306"
+    db_name  = ENV['DB_NAME']  || "dbname"
+    db_user2 = ENV['DB_USER']  || "dbuser"
+    db_pass  = ENV['DB_PASS']  || "dbpass"
+
+    # Where to clone and where to put jar (inside VM)
+    project_dir = "/home/#{app_user}/pet-clinic" # PROJECT_DIR
+    app_dir     = "/home/#{app_user}"            # APP_DIR (APP_USER home)
+
+    # Ensure provision script is executable (important on Windows)
+    config.vm.provision "shell", inline: "chmod +x /vagrant/provision-app.sh"
+
+    app.vm.provision "shell",
+      path: "provision-app.sh",
+      env: {
+        "APP_USER"    => app_user,
+        "PROJECT_DIR" => project_dir,
+        "APP_DIR"     => app_dir,
+        "DB_HOST"     => db_host,
+        "DB_PORT"     => db_port,
+        "DB_NAME"     => db_name,
+        "DB_USER"     => db_user2,
+        "DB_PASS"     => db_pass
+      }
+  end
+end
