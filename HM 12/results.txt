@@ -1,0 +1,245 @@
+--- ACTION: GET ALL STUDENTS (START) ---
+Status Code: 200
+Response Body: [
+  {
+    "age": "20",
+    "first_name": "John",
+    "id": "1",
+    "last_name": "Doe"
+  },
+  {
+    "age": "22",
+    "first_name": "Jane",
+    "id": "2",
+    "last_name": "Smith"
+  },
+  {
+    "age": "19",
+    "first_name": "Bob",
+    "id": "3",
+    "last_name": "Johnson"
+  },
+  {
+    "age": "20",
+    "first_name": "Johny",
+    "id": "4",
+    "last_name": "Doe"
+  }
+]
+------------------------------
+
+--- ACTION: CREATE STUDENT: Alice ---
+Status Code: 201
+Response Body: {
+  "age": "21",
+  "first_name": "Alice",
+  "id": "5",
+  "last_name": "Smith"
+}
+------------------------------
+
+--- ACTION: CREATE STUDENT: Bob ---
+Status Code: 201
+Response Body: {
+  "age": "22",
+  "first_name": "Bob",
+  "id": "6",
+  "last_name": "Jones"
+}
+------------------------------
+
+--- ACTION: CREATE STUDENT: Charlie ---
+Status Code: 201
+Response Body: {
+  "age": "23",
+  "first_name": "Charlie",
+  "id": "7",
+  "last_name": "Brown"
+}
+------------------------------
+
+--- ACTION: GET ALL STUDENTS (AFTER POST) ---
+Status Code: 200
+Response Body: [
+  {
+    "age": "20",
+    "first_name": "John",
+    "id": "1",
+    "last_name": "Doe"
+  },
+  {
+    "age": "22",
+    "first_name": "Jane",
+    "id": "2",
+    "last_name": "Smith"
+  },
+  {
+    "age": "19",
+    "first_name": "Bob",
+    "id": "3",
+    "last_name": "Johnson"
+  },
+  {
+    "age": "20",
+    "first_name": "Johny",
+    "id": "4",
+    "last_name": "Doe"
+  },
+  {
+    "age": "21",
+    "first_name": "Alice",
+    "id": "5",
+    "last_name": "Smith"
+  },
+  {
+    "age": "22",
+    "first_name": "Bob",
+    "id": "6",
+    "last_name": "Jones"
+  },
+  {
+    "age": "23",
+    "first_name": "Charlie",
+    "id": "7",
+    "last_name": "Brown"
+  }
+]
+------------------------------
+
+--- ACTION: PATCH STUDENT 2 AGE ---
+Status Code: 200
+Response Body: {
+  "age": "25",
+  "first_name": "Jane",
+  "id": "2",
+  "last_name": "Smith"
+}
+------------------------------
+
+--- ACTION: GET STUDENT 2 ---
+Status Code: 200
+Response Body: {
+  "age": "25",
+  "first_name": "Jane",
+  "id": "2",
+  "last_name": "Smith"
+}
+------------------------------
+
+--- ACTION: PUT STUDENT 3 ---
+Status Code: 200
+Response Body: {
+  "age": "50",
+  "first_name": "Charles",
+  "id": "3",
+  "last_name": "Xavier"
+}
+------------------------------
+
+--- ACTION: GET STUDENT 3 ---
+Status Code: 200
+Response Body: {
+  "age": "50",
+  "first_name": "Charles",
+  "id": "3",
+  "last_name": "Xavier"
+}
+------------------------------
+
+--- ACTION: GET ALL STUDENTS (BEFORE DELETE) ---
+Status Code: 200
+Response Body: [
+  {
+    "age": "20",
+    "first_name": "John",
+    "id": "1",
+    "last_name": "Doe"
+  },
+  {
+    "age": "25",
+    "first_name": "Jane",
+    "id": "2",
+    "last_name": "Smith"
+  },
+  {
+    "age": "50",
+    "first_name": "Charles",
+    "id": "3",
+    "last_name": "Xavier"
+  },
+  {
+    "age": "20",
+    "first_name": "Johny",
+    "id": "4",
+    "last_name": "Doe"
+  },
+  {
+    "age": "21",
+    "first_name": "Alice",
+    "id": "5",
+    "last_name": "Smith"
+  },
+  {
+    "age": "22",
+    "first_name": "Bob",
+    "id": "6",
+    "last_name": "Jones"
+  },
+  {
+    "age": "23",
+    "first_name": "Charlie",
+    "id": "7",
+    "last_name": "Brown"
+  }
+]
+------------------------------
+
+--- ACTION: DELETE STUDENT 1 ---
+Status Code: 200
+Response Body: {
+  "message": "Student 1 successfully deleted"
+}
+------------------------------
+
+--- ACTION: GET ALL STUDENTS (FINAL) ---
+Status Code: 200
+Response Body: [
+  {
+    "age": "25",
+    "first_name": "Jane",
+    "id": "2",
+    "last_name": "Smith"
+  },
+  {
+    "age": "50",
+    "first_name": "Charles",
+    "id": "3",
+    "last_name": "Xavier"
+  },
+  {
+    "age": "20",
+    "first_name": "Johny",
+    "id": "4",
+    "last_name": "Doe"
+  },
+  {
+    "age": "21",
+    "first_name": "Alice",
+    "id": "5",
+    "last_name": "Smith"
+  },
+  {
+    "age": "22",
+    "first_name": "Bob",
+    "id": "6",
+    "last_name": "Jones"
+  },
+  {
+    "age": "23",
+    "first_name": "Charlie",
+    "id": "7",
+    "last_name": "Brown"
+  }
+]
+------------------------------
+
