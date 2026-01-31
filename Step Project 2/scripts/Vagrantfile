@@ -1,0 +1,41 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+  
+  config.vm.define "jenkins-master" do |master|
+    master.vm.network "private_network", ip: "192.168.56.10"
+    master.vm.hostname = "jenkins-master"
+    master.vm.provider "virtualbox" do |vb|
+      vb.memory = 4096
+      vb.cpus = 2
+    end
+    master.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+      sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      sudo apt-get update
+      sudo apt-get install -y docker-ce
+      sudo usermod -aG docker vagrant
+      # Run Jenkins Container
+      sudo docker run -d -p 8080:8080 -p 50000:50000 --name jenkins --restart always jenkins/jenkins:lts
+    SHELL
+  end
+
+  config.vm.define "jenkins-worker" do |worker|
+    worker.vm.network "private_network", ip: "192.168.56.11"
+    worker.vm.hostname = "jenkins-worker"
+    worker.vm.provider "virtualbox" do |vb|
+      vb.memory = 4096
+      vb.cpus = 2
+    end
+    worker.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get install -y default-jre apt-transport-https ca-certificates curl software-properties-common
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+      sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      sudo apt-get update
+      sudo apt-get install -y docker-ce
+      sudo usermod -aG docker vagrant
+    SHELL
+  end
+end
