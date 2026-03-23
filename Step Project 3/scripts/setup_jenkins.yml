@@ -1,0 +1,85 @@
+---
+- name: Setup Jenkins Master and Nginx Reverse Proxy
+  hosts: all
+  become: yes
+  
+  tasks:
+    - name: Download Jenkins repo
+      get_url:
+        url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+        dest: /etc/yum.repos.d/jenkins.repo
+
+    - name: Import Jenkins rpm key
+      rpm_key:
+        state: present
+        key: https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+    - name: Upgrade all packages (using command to avoid Ansible dnf bugs)
+      command: yum update -y
+
+    - name: Install Java 17 (using command)
+      command: yum install java-17-amazon-corretto -y
+
+    - name: Install Jenkins (using command)
+      command: yum install jenkins -y
+
+    - name: Start and enable Jenkins service
+      systemd:
+        name: jenkins
+        state: started
+        enabled: yes
+
+    - name: Install Nginx via amazon-linux-extras
+      command: amazon-linux-extras install nginx1 -y
+      args:
+        creates: /usr/sbin/nginx
+
+    - name: Configure Nginx as a reverse proxy for Jenkins
+      copy:
+        dest: /etc/nginx/nginx.conf
+        content: |
+          user nginx;
+          worker_processes auto;
+          error_log /var/log/nginx/error.log;
+          pid /run/nginx.pid;
+
+          events {
+              worker_connections 1024;
+          }
+
+          http {
+              log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                                '$status $body_bytes_sent "$http_referer" '
+                                '"$http_user_agent" "$http_x_forwarded_for"';
+
+              access_log  /var/log/nginx/access.log  main;
+
+              sendfile            on;
+              tcp_nopush          on;
+              tcp_nodelay         on;
+              keepalive_timeout   65;
+              types_hash_max_size 4096;
+
+              include             /etc/nginx/mime.types;
+              default_type        application/octet-stream;
+
+              server {
+                  listen       80;
+                  listen       [::]:80;
+                  server_name  _;
+
+                  location / {
+                      proxy_pass http://127.0.0.1:8080;
+                      proxy_set_header Host $host;
+                      proxy_set_header X-Real-IP $remote_addr;
+                      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                      proxy_set_header X-Forwarded-Proto $scheme;
+                  }
+              }
+          }
+
+    - name: Start and enable Nginx service
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes

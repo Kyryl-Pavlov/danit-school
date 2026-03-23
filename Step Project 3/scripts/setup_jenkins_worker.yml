@@ -1,0 +1,29 @@
+---
+- name: Setup Jenkins Worker Node
+  hosts: all
+  become: yes
+  
+  tasks:
+    - name: Upgrade all packages
+      command: yum update -y
+
+    - name: Install Java 17 (Required by Jenkins)
+      command: yum install java-17-amazon-corretto -y
+
+    - name: Install Git
+      command: yum install git -y
+
+    - name: Install Docker
+      command: yum install docker -y
+
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
