@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: random-string-deployment
+  labels:
+    app: random-string
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: random-string
+  template:
+    metadata:
+      labels:
+        app: random-string
+    spec:
+      containers:
+      - name: random-string-server
+        image: kyryl2b/random-string-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
